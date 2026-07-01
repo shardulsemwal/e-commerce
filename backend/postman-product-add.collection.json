@@ -1,0 +1,92 @@
+{
+  "info": {
+    "name": "Ecommerce App - Product Add",
+    "_postman_id": "8e2f7c8b-4b9f-4a1f-8a06-7d3f3f2c9c71",
+    "description": "Ready-to-import Postman collection for POST /api/product/add. Sends multipart/form-data with file fields image1-image4.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Add Product",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "name",
+              "value": "T-Shirt",
+              "type": "text"
+            },
+            {
+              "key": "description",
+              "value": "Cotton oversized tee",
+              "type": "text"
+            },
+            {
+              "key": "price",
+              "value": "499",
+              "type": "text"
+            },
+            {
+              "key": "category",
+              "value": "Men",
+              "type": "text"
+            },
+            {
+              "key": "subCategory",
+              "value": "Topwear",
+              "type": "text"
+            },
+            {
+              "key": "sizes",
+              "value": "[\"S\",\"M\",\"L\"]",
+              "type": "text"
+            },
+            {
+              "key": "bestseller",
+              "value": "true",
+              "type": "text"
+            },
+            {
+              "key": "image1",
+              "type": "file",
+              "src": ""
+            },
+            {
+              "key": "image2",
+              "type": "file",
+              "src": ""
+            },
+            {
+              "key": "image3",
+              "type": "file",
+              "src": ""
+            },
+            {
+              "key": "image4",
+              "type": "file",
+              "src": ""
+            }
+          ]
+        },
+        "url": {
+          "raw": "http://localhost:4000/api/product/add",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "4000",
+          "path": [
+            "api",
+            "product",
+            "add"
+          ]
+        },
+        "description": "Use form-data. Fill the text fields and attach files to image1-image4."
+      },
+      "response": []
+    }
+  ]
+}
