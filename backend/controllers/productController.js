@@ -28,7 +28,7 @@ const uploadImage = async (file, req) => {
 
 
 const addProduct = async (req, res) => {
-    console.log("add product api hit");4
+    console.log("add product api hit");
     try {
         const { name, description, price, category, subCategory } = req.body;
         const sizes = parseSizes(req.body.sizes);
@@ -103,6 +103,17 @@ const removeProduct = async (req, res) => {
     }
 }
 const singleProduct = async (req, res) => {
+    try{
+        const {productId}= req.body;
+        const product = await productModel.findById(productId);
+        res.json({ success: true, product });
+    } catch(error){
+        console.log(error);
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
 
 }
 export { addProduct, listProducts, removeProduct, singleProduct };

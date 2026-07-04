@@ -10,7 +10,13 @@
       "name": "Add Product",
       "request": {
         "method": "POST",
-        "header": [],
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{adminToken}}",
+            "type": "text"
+          }
+        ],
         "body": {
           "mode": "formdata",
           "formdata": [
@@ -44,15 +50,20 @@
               "value": "[\"S\",\"M\",\"L\"]",
               "type": "text"
             },
-            {
-              "key": "bestseller",
-              "value": "true",
-              "type": "text"
-            },
-            {
-              "key": "image1",
-              "type": "file",
-              "src": ""
+          {
+            "key": "bestseller",
+            "value": "true",
+            "type": "text"
+          },
+          {
+            "key": "token",
+            "value": "{{adminToken}}",
+            "type": "text"
+          },
+          {
+            "key": "image1",
+            "type": "file",
+            "src": ""
             },
             {
               "key": "image2",

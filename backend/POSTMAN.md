@@ -2,6 +2,16 @@
 
 Use `multipart/form-data` in Postman for the `POST /api/product/add` request.
 
+This route is protected. Add the admin token in one of these ways:
+
+- `Authorization: Bearer <admin-token>`
+- `token: <admin-token>`
+- a form-data text field named `token`
+
+If you use form-data only, add the `token` field before the image fields.
+
+For `POST /api/user/admin`, send the body as raw JSON with `Content-Type: application/json`.
+
 Required form-data fields:
 
 - `name` - text

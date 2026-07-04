@@ -7,6 +7,12 @@ const createToken = (id) => {
     return jwt.sign({ id }, process.env.JWT_SECRET);
 }
 
+const normalizeValue = (value) => {
+    return String(value ?? "")
+        .trim()
+        .replace(/^['"]|['"]$/g, "");
+};
+
 // Route for user Login
 const loginUser = async (req, res) => {
     console.log("login api called");
@@ -78,7 +84,26 @@ const registerUser = async (req, res) => {
 
 // Route for admin Login
 const adminLogin = async (req, res) => {
-    res.json({ success: false, message: "Admin login route not implemented yet" });
+    try{
+        const { email, password } = req.body;
+        const inputEmail = normalizeValue(email);
+        const inputPassword = normalizeValue(password);
+        const adminEmail = normalizeValue(process.env.ADMIN_EMAIL);
+        const adminPassword = normalizeValue(process.env.ADMIN_PASSWORD);
+
+        if(inputEmail === adminEmail && inputPassword === adminPassword){
+            const token = jwt.sign(
+                { email: adminEmail, role: "admin" },
+                process.env.JWT_SECRET
+            );
+            res.json({success: true, token});
+        }else{
+            res.json({success: false, message: "Invalid credentials"});
+        }
+    }catch(error){
+        console.log(error);
+        res.json({success: false, message: error.message});
+    }
 }
 
 export { loginUser, registerUser, adminLogin }
