@@ -4,6 +4,7 @@ import Title from './Title';
 import ProductItem from './ProductItem';
 import {assets} from '../assets/assets'
 import { useLocation } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 
 const BestSeller = () => {

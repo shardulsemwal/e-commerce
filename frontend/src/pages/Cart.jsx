@@ -17,8 +17,10 @@ const Cart = () => {
   const {products, currency, cartItems, updateQuantity, navigate} = useContext(ShopContext);
 
   const [cartData, setCartData] = useState([]);
-
+ 
   useEffect(() => {
+ 
+    if (products.length > 0) {
     const tempData = [];
     for (const items in cartItems) {
       for(const item in cartItems[items]){
@@ -32,7 +34,9 @@ const Cart = () => {
       }
     }
     setCartData(tempData);
-  }, [cartItems])
+  }
+
+  }, [cartItems, products]);
 
   return (
     <div className='border-t pt-14'>
@@ -64,6 +68,7 @@ const Cart = () => {
             }
             )
           }
+            
         </div>
         <div className='flex justify-end my-20'>
           <div className='w-full sm:w-[450px]'>
@@ -79,3 +84,5 @@ const Cart = () => {
 }
 
 export default Cart
+
+
