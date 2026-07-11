@@ -22,8 +22,21 @@ const parseSizes = (value) => {
     }
     return trimmedValue.split(",").map((item) => item.trim()).filter(Boolean);
 };
-const uploadImage = async (file, req) => {
-    return `${req.protocol}://${req.get("host")}/uploads/${file.filename}`;
+const uploadImage = async (file) => {
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+    return new Promise((resolve, reject) => {
+        cloudinary.uploader.upload_stream(
+            { resource_type: "auto" },
+            (error, result) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(result.secure_url);
+                }
+            }
+        ).end(buffer);
+    });
 };
 
 
@@ -55,7 +68,7 @@ const addProduct = async (req, res) => {
         if (!name || !description || !price || !category || !subCategory || !sizes.length || !imageFiles.length) {
             return res.status(400).json({ success: false, message: "Missing required product fields" });
         }
-        const uploadedImageUrls = await Promise.all(imageFiles.map((file) => uploadImage(file, req)));
+        const uploadedImageUrls = await Promise.all(imageFiles.map((file) => uploadImage(file)));
         const product = await productModel.create({
             name,
             description,
