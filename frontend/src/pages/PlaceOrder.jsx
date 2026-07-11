@@ -8,6 +8,9 @@ import { useState } from 'react'
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useLocation } from 'react-router-dom'
+import { toast } from 'react-toastify'
+import axios from 'axios'
+
 
 const PlaceOrder = () => {
 
@@ -25,6 +28,59 @@ const PlaceOrder = () => {
         phoneNumber: ''
     });
 
+    const loadRazorpayScript = () => {
+      return new Promise((resolve, reject) => {
+        if (window.Razorpay) {
+          resolve(true);
+          return;
+        }
+
+        const existingScript = document.querySelector('script[src="https://checkout.razorpay.com/v1/checkout.js"]');
+        if (existingScript) {
+          existingScript.addEventListener('load', () => resolve(true), { once: true });
+          existingScript.addEventListener('error', () => reject(new Error('Failed to load Razorpay checkout script')), { once: true });
+          return;
+        }
+
+        const script = document.createElement('script');
+        script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+        script.async = true;
+        script.onload = () => resolve(true);
+        script.onerror = () => reject(new Error('Failed to load Razorpay checkout script'));
+        document.body.appendChild(script);
+      });
+    };
+
+    const initPay = async (order) => {
+        await loadRazorpayScript();
+
+        const options = {
+            key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+            amount: order.amount,
+            currency: order.currency,
+            name: "Order Payment",
+            description: "Payment for your order",
+            order_id: order.id,
+            receipt: order.receipt,
+            handler: async (response) => {
+              console.log(response);
+              try{
+                const {data} = await axios.post(backendUrl + '/api/order/verify-razorpay',response,{headers: {token}});
+                if (data.success) {
+                    setCartItems({});
+                    navigate('/orders');
+                }
+
+              } catch (error) {
+                console.log(error);
+                toast.error(error.message);
+              }
+            }
+        }
+        const rzp = new window.Razorpay(options);
+        rzp.open();
+    }
+
     const onChangeHandler = (event) => {
       const name = event.target.name;
       const value = event.target.value;
@@ -32,10 +88,19 @@ const PlaceOrder = () => {
       setFormData(data => ({...data,[name]: value}));
     }
 
-    const onSubmitHandler = (event) => {
+    const onSubmitHandler = async (event) => {
       event.preventDefault();
+      
+      if (!token) {
+        toast.error('Please login to place an order');
+        navigate('/login');
+        return;
+      }
+
       try {
+
         let orderItems = [];
+        
         for (const items in cartItems) {
           for (const item in cartItems[items]) {
             if(cartItems[items][item] > 0){
@@ -48,11 +113,50 @@ const PlaceOrder = () => {
             }
           }
         }
-        console.log(orderItems);
+
+        let orderData = {
+          address: formData,
+          items: orderItems,
+          amount: getCartAmount() + delivery_fee,
+        }
+        switch (method) {
+            case 'cod':
+              const response = await axios.post(backendUrl + '/api/order/place', orderData, {headers: {token}});
+
+              if(response.data.success){
+                setCartItems({});
+                navigate('/orders');
+              }else{
+                toast.error(response.data.message);
+              }
+              break;
+
+              case 'stripe':
+                const responseStripe = await axios.post(backendUrl + '/api/order/stripe', orderData, {headers: {token}});
+                if(responseStripe.data.success){
+                  const {session_url} = responseStripe.data;
+                  window.location.replace(session_url);
+                }else{
+                  toast.error(responseStripe.data.message);
+                }
+                // TODO: Implement Stripe payment
+                break;
+
+              case 'razorpay':
+                const responseRazorpay = await axios.post(backendUrl + '/api/order/razorpay', orderData, {headers: {token}});
+                if(responseRazorpay.data.success){
+                  console.log(responseRazorpay.data.order);
+                  initPay(responseRazorpay.data.order);
+                }
+                break;
+
+              default:
+                break;
+        }
 
       } catch (error) {
-
-
+        console.log(error);
+        toast.error(error.message);
       }
     }
 

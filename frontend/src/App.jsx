@@ -1,5 +1,5 @@
 import React from 'react'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom'
 import Home from './pages/Home'
 import About from './pages/About'
 import Collection from './pages/Collection'
@@ -19,6 +19,7 @@ import { ShopContext } from './context/ShopContext'
 import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useState } from 'react'
+import Verify from './pages/Verify'
 
 
 const App = () => {
@@ -36,6 +37,7 @@ const App = () => {
         <Route path='/login' element={<Login />} />
         <Route path='/place-order' element={<PlaceOrder />} />
         <Route path='/orders' element={<Orders />} />
+        <Route path='/verify' element={<Verify />} /> 
       </Routes>
       <Footer />
       <ToastContainer />

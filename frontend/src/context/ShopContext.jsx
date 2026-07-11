@@ -14,7 +14,7 @@ const ShopContextProvider = (props) => {
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
     const [search, setSearch] = useState('');
     const [showSearch, setShowSearch] = useState(false);
-    const [cartItems, setCartItems] = useState([]);
+    const [cartItems, setCartItems] = useState({});
     const navigate = useNavigate();
     const [token, setToken] = useState('');
     const [products, setProducts] = useState([]);
@@ -137,10 +137,22 @@ const ShopContextProvider = (props) => {
 
     useEffect(() => {
         if (!token && localStorage.getItem('token')) {
-            setToken(localStorage.getItem('token'));
-            getUserCart(localStorage.getItem('token'));
+            const t = localStorage.getItem('token');
+            setToken(t);
+            // set axios default header for subsequent requests
+            axios.defaults.headers.common['token'] = t;
+            getUserCart(t);
         }
-    }, []);    
+        // when token changes, ensure axios default header is set
+    }, []);
+
+    useEffect(() => {
+        if (token) {
+            axios.defaults.headers.common['token'] = token;
+        } else {
+            delete axios.defaults.headers.common['token'];
+        }
+    }, [token]);
 
     const value = {
             products,
@@ -151,7 +163,9 @@ const ShopContextProvider = (props) => {
             showSearch,
             setShowSearch,
             cartItems,
+            setCartItems,
             addToCart,
+            setShowSearch,
             getCartCount,
             getCartAmount,
             updateQuantity,

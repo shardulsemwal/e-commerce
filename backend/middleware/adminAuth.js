@@ -1,6 +1,12 @@
 import jwt from 'jsonwebtoken';
 import fs from "fs/promises";
 
+const normalizeValue = (value) => {
+    return String(value ?? "")
+        .trim()
+        .replace(/^['"]|['"]$/g, "");
+};
+
 const cleanupUploadedFiles = async (files) => {
     const uploadedFiles = Object.values(files || {}).flat().filter(Boolean);
     await Promise.allSettled(
@@ -27,12 +33,15 @@ const adminAuth = async (req, res, next) => {
 
         const token_decode = jwt.verify(token, process.env.JWT_SECRET);
 
+        const normalizedAdminEmail = normalizeValue(process.env.ADMIN_EMAIL);
+        const normalizedAdminPassword = normalizeValue(process.env.ADMIN_PASSWORD);
+
         const isValidAdminToken =
             (typeof token_decode === "object" &&
                 token_decode !== null &&
                 token_decode.role === "admin" &&
-                token_decode.email === process.env.ADMIN_EMAIL) ||
-            token_decode === process.env.ADMIN_EMAIL + process.env.ADMIN_PASSWORD;
+                token_decode.email === normalizedAdminEmail) ||
+            token_decode === normalizedAdminEmail + normalizedAdminPassword;
 
         if (!isValidAdminToken) {
             await cleanupUploadedFiles(req.files);
