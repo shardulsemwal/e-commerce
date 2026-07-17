@@ -20,8 +20,9 @@ const connectDB = async () => {
     console.log(process.env.MONGO_URI);
     await mongoose.connect(connectionUrl.toString());
   } catch (error) {
-    console.log("Mongo Error:");
-    console.log(error);
+    console.error("Mongo Error:");
+    console.error(error);
+    throw error;
   }
 };
 export default connectDB;

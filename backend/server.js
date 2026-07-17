@@ -11,13 +11,15 @@ import connectCloudinary from "./config/cloudinary.js";
 // APP CONFIG
 const app = express();
 const port = process.env.PORT || 4000;
-connectDB();
-try {
-  connectCloudinary();
-} catch (error) {
-  console.error('Cloudinary startup failed:', error.message);
-  process.exit(1);
-}
+
+(async () => {
+  try {
+    await connectDB();
+    connectCloudinary();
+  } catch (error) {
+    console.error('Cloudinary startup failed:', error.message);
+    process.exit(1);
+  }
 
 //middlewares
 const allowedOrigins = [
@@ -56,6 +58,7 @@ app.get("/", (req, res) => {
   res.send("API WORKING ")
 })
 app.listen(port, () => console.log('Server started on port : ' + port));
+})();
 
 
 
