@@ -12,14 +12,16 @@ import connectCloudinary from "./config/cloudinary.js";
 const app = express();
 const port = process.env.PORT || 4000;
 
+// Initialize async startup
 (async () => {
   try {
     await connectDB();
     connectCloudinary();
   } catch (error) {
-    console.error('Cloudinary startup failed:', error.message);
+    console.error('Startup failed:', error.message);
     process.exit(1);
   }
+})();
 
 //middlewares
 const allowedOrigins = [
@@ -43,7 +45,6 @@ const corsOptions = {
   allowedHeaders: ["Content-Type", "Authorization", "token"]
 };
 
-
 app.use(cors(corsOptions));
 app.options(/(.*)/, cors(corsOptions));
 app.use(express.json());
@@ -57,8 +58,14 @@ app.use('/api/order', orderRouter);
 app.get("/", (req, res) => {
   res.send("API WORKING ")
 })
-app.listen(port, () => console.log('Server started on port : ' + port));
-})();
+
+// Local development listener
+if (!process.env.VERCEL) {
+  app.listen(port, () => console.log('Server started on port : ' + port));
+}
+
+// Export for Vercel serverless
+export default app;
 
 
 
