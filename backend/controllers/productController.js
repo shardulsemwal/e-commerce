@@ -1,6 +1,5 @@
 import {v2 as cloudinary} from "cloudinary";
 import productModel from "../models/productModel.js";
-
 const parseSizes = (value) => {
     if (Array.isArray(value)) {
         return value;
@@ -23,23 +22,19 @@ const parseSizes = (value) => {
     return trimmedValue.split(",").map((item) => item.trim()).filter(Boolean);
 };
 const uploadImage = async (file) => {
-    const arrayBuffer = await file.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
     return new Promise((resolve, reject) => {
         cloudinary.uploader.upload_stream(
-            { resource_type: "auto" },
+            { resource_type: "auto", folder: "ecommerce-products" },
             (error, result) => {
                 if (error) {
                     reject(error);
                 } else {
-                    resolve(result.secure_url);
+                    resolve(result.secure_url || result.url);
                 }
             }
-        ).end(buffer);
+        ).end(file.buffer);
     });
 };
-
-
 const addProduct = async (req, res) => {
     console.log("add product api hit");
     try {
@@ -102,7 +97,6 @@ const listProducts = async (req, res) => {
         });
     }
 }
-
 const removeProduct = async (req, res) => {
     try{
         const { id } = req.body;
@@ -138,6 +132,5 @@ const singleProduct = async (req, res) => {
             message: error.message
         });
     }
-
 }
 export { addProduct, listProducts, removeProduct, singleProduct };

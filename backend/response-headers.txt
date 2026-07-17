@@ -1,0 +1,14 @@
+HTTP/1.1 403 Forbidden
+Date: Fri, 17 Jul 2026 10:20:13 GMT
+Content-Type: application/json; charset=utf-8
+Transfer-Encoding: chunked
+Connection: keep-alive
+Vary: Accept-Encoding
+Status: 403 Forbidden
+Cache-Control: no-cache
+X-Cld-Error: [prodenv:25efc70af7a77db8c352a4211f6acb] Request forbidden due to missing permissions (actions=["create"])
+X-XSS-Protection: 1; mode=block
+X-Request-Id: 6d06e9052a52312840ddd6342f1efc53
+X-UA-Compatible: IE=Edge,chrome=1
+Server: cloudinary
+

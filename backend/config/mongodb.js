@@ -17,6 +17,7 @@ const connectDB = async () => {
       connectionUrl.pathname = "/e-commerce";
     }
     dns.setServers(["8.8.8.8", "1.1.1.1"]);
+    console.log(process.env.MONGO_URI);
     await mongoose.connect(connectionUrl.toString());
   } catch (error) {
     console.log("Mongo Error:");

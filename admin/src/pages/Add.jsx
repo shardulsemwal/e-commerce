@@ -62,7 +62,7 @@ const [image4, setImage4] = useState(null);
 
 
     } catch (error) {
-      console.error(error);
+      console.log(error);
       toast.error(error.message);
     }
   }
@@ -164,5 +164,4 @@ const [image4, setImage4] = useState(null);
     </form>
   )
 }
-
 export default Add

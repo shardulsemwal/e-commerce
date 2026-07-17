@@ -11,8 +11,13 @@ import connectCloudinary from "./config/cloudinary.js";
 // APP CONFIG
 const app = express();
 const port = process.env.PORT || 4000;
-connectDB()
-connectCloudinary();
+connectDB();
+try {
+  connectCloudinary();
+} catch (error) {
+  console.error('Cloudinary startup failed:', error.message);
+  process.exit(1);
+}
 
 //middlewares
 app.use(cors());

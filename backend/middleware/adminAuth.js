@@ -32,7 +32,7 @@ const adminAuth = async (req, res, next) => {
         }
 
         const token_decode = jwt.verify(token, process.env.JWT_SECRET);
-
+  
         const normalizedAdminEmail = normalizeValue(process.env.ADMIN_EMAIL);
         const normalizedAdminPassword = normalizeValue(process.env.ADMIN_PASSWORD);
 
